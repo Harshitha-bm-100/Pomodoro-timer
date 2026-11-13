@@ -1,9 +1,18 @@
 const heading = document.querySelector('h1');
 const time = document.querySelector('p');
 const startButton = document.querySelector('#start');
+const focusMinutesInput = document.querySelector('#focus-minutes');
 
 let remainingSeconds = 25 * 60;
 let timer = null;
+
+function focusSeconds() {
+    const minutes = Number(focusMinutesInput.value);
+    if (!Number.isInteger(minutes) || minutes < 1) {
+        return 25 * 60;
+    }
+    return minutes * 60;
+}
 
 function updateHeading() {
     if (heading.textContent === 'Focus') {
@@ -11,7 +20,7 @@ function updateHeading() {
         remainingSeconds = 5 * 60;
     } else {
         heading.textContent = 'Focus';
-        remainingSeconds = 25 * 60;
+        remainingSeconds = focusSeconds();
     }
 }
 
@@ -41,6 +50,12 @@ startButton.addEventListener('click', () => {
     }, 1000);
 });
 
+focusMinutesInput.addEventListener('input', () => {
+    if (timer !== null || heading.textContent !== 'Focus') return;
+    remainingSeconds = focusSeconds();
+    updateDisplay();
+});
+
 updateDisplay(); // Call the function to update the display when the page loads(1st time)
 
 const resetButton = document.querySelector('#reset');
@@ -48,7 +63,7 @@ resetButton.addEventListener('click', () => {
     clearInterval(timer);
     timer = null;
     heading.textContent = 'Focus';
-    remainingSeconds = 25 * 60;
+    remainingSeconds = focusSeconds();
     updateDisplay();
 });
 
@@ -57,6 +72,3 @@ pauseButton.addEventListener('click', () => {
     clearInterval(timer);
     timer = null;
 });
-
-
-
